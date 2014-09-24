@@ -1,39 +1,40 @@
 package me.porcelli.todomvc.client;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
+import me.porcelli.todomvc.client.component.NewTodoPresenter;
+import me.porcelli.todomvc.client.component.NewTodoView;
+import me.porcelli.todomvc.client.component.TodoListFooterPresenter;
+import me.porcelli.todomvc.client.component.TodoListFooterView;
+import me.porcelli.todomvc.client.component.TodoListPresenter;
+import me.porcelli.todomvc.client.component.TodoListView;
 import me.porcelli.todomvc.client.resources.AppResource;
 
 public class TodoMVCEntryPoint implements EntryPoint {
 
+    private NewTodoPresenter newTodoPresenter;
+    private TodoListPresenter todoListPresenter;
+    private TodoListFooterPresenter todoListFooterPresenter;
+
     @Override
     public void onModuleLoad() {
-
         AppResource.INSTANCE.CSS().ensureInjected();
 
-        final HTMLPanel section = new HTMLPanel( "section", "" );
-        section.addStyleName( AppResource.INSTANCE.CSS().todoapp() );
+        buildObjects();
 
-        section.add( buildHeader() );
-        section.add( buildSectionMain() );
-        section.add( buildFooter() );
+        final HTMLPanel appArea = new HTMLPanel( "section", "" );
+        appArea.addStyleName( AppResource.INSTANCE.CSS().todoapp() );
 
-        RootPanel.get().add( section );
-        RootPanel.get().add( buildPageFooter() );
+        appArea.add( buildHeader() );
+        appArea.add( todoListPresenter.getView() );
+        appArea.add( todoListFooterPresenter.getView() );
+
+        RootPanel.get().add( appArea );
+        RootPanel.get().add( buildFooter() );
     }
 
-    private HTMLPanel buildPageFooter() {
+    private HTMLPanel buildFooter() {
         final HTMLPanel footer = new HTMLPanel( "footer", "" );
         footer.addStyleName( AppResource.INSTANCE.CSS().info() );
 
@@ -56,133 +57,27 @@ public class TodoMVCEntryPoint implements EntryPoint {
         final HTMLPanel h1 = new HTMLPanel( "h1", "" );
         h1.getElement().setInnerText( "todos" );
 
-        final TextBox textBox = new TextBox();
-        textBox.getElement().setPropertyString( "placeholder", "What needs to be done?" );
-        textBox.addStyleName( AppResource.INSTANCE.CSS().newTodo() );
-
         header.add( h1 );
-        header.add( textBox );
+        header.add( newTodoPresenter.getView() );
 
         return header;
     }
 
-    public HTMLPanel buildSectionMain() {
-        final HTMLPanel main = new HTMLPanel( "section", "" );
-        main.addStyleName( AppResource.INSTANCE.CSS().main() );
+    private void buildObjects() {
+        todoListPresenter = new TodoListPresenter();
+        final TodoListView todoListView = new TodoListView();
+        todoListView.init( todoListPresenter );
 
-        final CheckBox toggleAll = new CheckBox();
+        newTodoPresenter = new NewTodoPresenter();
+        final NewTodoView newTodoView = new NewTodoView();
+        newTodoView.init( newTodoPresenter );
 
-        toggleAll.getElement().getFirstChildElement().setClassName( AppResource.INSTANCE.CSS().toggleAll() );
+        todoListFooterPresenter = new TodoListFooterPresenter();
+        final TodoListFooterView todoListFooterView = new TodoListFooterView();
+        todoListFooterView.init( todoListFooterPresenter );
 
-        final HTMLPanel todoList = new HTMLPanel( "ul", "" );
-        todoList.addStyleName( AppResource.INSTANCE.CSS().todoList() );
-
-        todoList.add( createTodo( "style todo in pure gwt!", true ) );
-        todoList.add( createTodo( "finish demos!", false ) );
-        todoList.add( createTodo( "ed asddklsjdfa it", null ) );
-
-        main.add( toggleAll );
-        main.add( todoList );
-
-        return main;
+        newTodoPresenter.init( todoListPresenter, newTodoView );
+        todoListPresenter.init( todoListView, todoListFooterPresenter );
+        todoListFooterPresenter.init( todoListPresenter, todoListFooterView );
     }
-
-    public HTMLPanel buildFooter() {
-        final HTMLPanel footer = new HTMLPanel( "footer", "" );
-        footer.getElement().getStyle().setDisplay( Style.Display.BLOCK );
-        footer.addStyleName( AppResource.INSTANCE.CSS().footer() );
-
-        final InlineLabel todoCount = new InlineLabel( "3 items left" );
-        todoCount.addStyleName( AppResource.INSTANCE.CSS().todoCount() );
-
-        footer.add( todoCount );
-
-        final HTMLPanel filters = new HTMLPanel( "ul", "" );
-        filters.addStyleName( AppResource.INSTANCE.CSS().filters() );
-
-        {
-            final HTMLPanel selected = new HTMLPanel( "li", "" );
-            final Anchor allAnchor = new Anchor( "All" );
-            allAnchor.addClickHandler( new ClickHandler() {
-                @Override
-                public void onClick( ClickEvent event ) {
-                    Window.alert( "All!" );
-                }
-            } );
-
-            selected.add( allAnchor );
-            filters.add( selected );
-        }
-
-        {
-            final HTMLPanel selected = new HTMLPanel( "li", "" );
-            final Anchor activeAnchor = new Anchor( "Active" );
-            activeAnchor.addClickHandler( new ClickHandler() {
-                @Override
-                public void onClick( ClickEvent event ) {
-                    Window.alert( "Active!" );
-                }
-            } );
-
-            selected.add( activeAnchor );
-            filters.add( selected );
-        }
-
-        {
-            final HTMLPanel selected = new HTMLPanel( "li", "" );
-            final Anchor activeAnchor = new Anchor( "Completed" );
-            activeAnchor.addClickHandler( new ClickHandler() {
-                @Override
-                public void onClick( ClickEvent event ) {
-                    Window.alert( "Completed!" );
-                }
-            } );
-
-            selected.add( activeAnchor );
-            filters.add( selected );
-        }
-
-        footer.add( filters );
-        final Button button = new Button( "Clear completed" );
-        button.addStyleName( AppResource.INSTANCE.CSS().clearCompleted() );
-        footer.add( button );
-
-        return footer;
-    }
-
-    public HTMLPanel createTodo( final String todo,
-                                 Boolean isCompleted ) {
-        final HTMLPanel element = new HTMLPanel( "li", "" );
-        final FlowPanel view = new FlowPanel();
-        TextBox edit = null;
-        view.addStyleName( AppResource.INSTANCE.CSS().view() );
-
-        if ( isCompleted == null ) {
-            edit = new TextBox();
-            edit.setText( todo );
-            edit.addStyleName( AppResource.INSTANCE.CSS().edit() );
-            element.addStyleName( AppResource.INSTANCE.CSS().editing() );
-        } else if ( isCompleted ) {
-            element.addStyleName( AppResource.INSTANCE.CSS().completed() );
-        }
-
-        final CheckBox toggle = new CheckBox();
-
-        toggle.getElement().getFirstChildElement().setClassName( AppResource.INSTANCE.CSS().toggle() );
-        toggle.setText( todo );
-
-        final Button destroy = new Button();
-        destroy.addStyleName( AppResource.INSTANCE.CSS().destroy() );
-
-        view.add( toggle );
-        view.add( destroy );
-        element.add( view );
-
-        if ( edit != null ) {
-            element.add( edit );
-        }
-
-        return element;
-    }
-
 }
