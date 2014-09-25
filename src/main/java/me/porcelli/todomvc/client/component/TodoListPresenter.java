@@ -6,9 +6,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import me.porcelli.todomvc.client.events.AddTodo;
+import me.porcelli.todomvc.client.events.DeleteTodo;
+import me.porcelli.todomvc.client.events.UpdateCount;
 import me.porcelli.todomvc.client.model.Status;
 import me.porcelli.todomvc.client.model.Todo;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
@@ -18,10 +23,12 @@ public class TodoListPresenter {
 
     @Inject
     private TodoListView view;
-    @Inject
-    private TodoListFooterPresenter todoListFooterPresenter;
+
     @Inject
     private SyncBeanManager beanManager;
+
+    @Inject
+    private Event<UpdateCount> updateCountEvent;
 
     private final Map<Todo, TodoElementPresenter> todoElements = new LinkedHashMap<Todo, TodoElementPresenter>();
 
@@ -30,17 +37,17 @@ public class TodoListPresenter {
         view.build();
     }
 
-    public void addTodo( final Todo newTodo ) {
+    public void addTodo( @Observes final AddTodo event ) {
         final TodoElementPresenter _presenter = beanManager.lookupBean( TodoElementPresenter.class ).getInstance();
-        _presenter.init( newTodo );
-        todoElements.put( newTodo, _presenter );
+        _presenter.init( event.getTodo() );
+        todoElements.put( event.getTodo(), _presenter );
 
         view.addTodo( _presenter.getView() );
-        todoListFooterPresenter.updateCount( todoElements.size() );
+        updateCountEvent.fire( new UpdateCount( todoElements.size() ) );
     }
 
-    public void deleteTodo( final Todo todo ) {
-        deleteTodo( todo, true );
+    public void deleteTodo( @Observes final DeleteTodo event ) {
+        deleteTodo( event.getTodo(), true );
     }
 
     public void deleteTodo( final Todo todo,
@@ -50,7 +57,7 @@ public class TodoListPresenter {
             presenter.delete();
         }
         if ( updateCount ) {
-            todoListFooterPresenter.updateCount( todoElements.size() );
+            updateCountEvent.fire( new UpdateCount( todoElements.size() ) );
         }
     }
 
@@ -80,7 +87,7 @@ public class TodoListPresenter {
         for ( final Todo todo : delete ) {
             deleteTodo( todo, false );
         }
-        todoListFooterPresenter.updateCount( todoElements.size() );
+        updateCountEvent.fire( new UpdateCount( todoElements.size() ) );
     }
 
     public void showOnlyActive() {

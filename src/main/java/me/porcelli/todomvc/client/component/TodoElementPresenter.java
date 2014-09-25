@@ -1,9 +1,11 @@
 package me.porcelli.todomvc.client.component;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import me.porcelli.todomvc.client.events.DeleteTodo;
 import me.porcelli.todomvc.client.model.Status;
 import me.porcelli.todomvc.client.model.Todo;
 
@@ -12,8 +14,9 @@ public class TodoElementPresenter {
 
     @Inject
     private View view;
+
     @Inject
-    private TodoListPresenter todoListPresenter;
+    private Event<DeleteTodo> deleteTodoEvent;
 
     private Todo data;
 
@@ -32,7 +35,7 @@ public class TodoElementPresenter {
 
     public void init( final Todo data ) {
         this.data = data;
-        this.view.setup(this);
+        this.view.setup( this );
         view.build();
     }
 
@@ -46,7 +49,7 @@ public class TodoElementPresenter {
 
     public void delete() {
         view.asWidget().removeFromParent();
-        todoListPresenter.deleteTodo( data );
+        deleteTodoEvent.fire( new DeleteTodo( data ) );
     }
 
     public IsWidget getView() {

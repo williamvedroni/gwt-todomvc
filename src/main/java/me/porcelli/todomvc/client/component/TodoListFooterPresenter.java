@@ -2,9 +2,11 @@ package me.porcelli.todomvc.client.component;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import me.porcelli.todomvc.client.events.UpdateCount;
 
 @ApplicationScoped
 public class TodoListFooterPresenter {
@@ -19,8 +21,8 @@ public class TodoListFooterPresenter {
         view.build();
     }
 
-    public void updateCount( int count ) {
-        view.updateCount( count );
+    public void updateCount( @Observes UpdateCount event ) {
+        view.updateCount( event.getCount() );
     }
 
     public void showAll() {
