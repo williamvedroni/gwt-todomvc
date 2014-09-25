@@ -1,14 +1,21 @@
 package me.porcelli.todomvc.client.component;
 
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import me.porcelli.todomvc.client.model.Status;
 import me.porcelli.todomvc.client.model.Todo;
 
+@Dependent
 public class TodoElementPresenter {
 
-    private Todo data;
+    @Inject
     private View view;
+    @Inject
     private TodoListPresenter todoListPresenter;
+
+    private Todo data;
 
     public interface View extends IsWidget {
 
@@ -19,14 +26,13 @@ public class TodoElementPresenter {
         void build();
 
         void setStatus( Status status );
+
+        void setup( TodoElementPresenter presenter );
     }
 
-    public void init( final Todo data,
-                      final View view,
-                      final TodoListPresenter todoListPresenter ) {
-        this.view = view;
+    public void init( final Todo data ) {
         this.data = data;
-        this.todoListPresenter = todoListPresenter;
+        this.view.setup(this);
         view.build();
     }
 

@@ -1,23 +1,28 @@
 package me.porcelli.todomvc.client.component;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import me.porcelli.todomvc.client.model.Status;
 import me.porcelli.todomvc.client.model.Todo;
 import me.porcelli.todomvc.client.service.IdGeneratorService;
 
-/**
- * TODO: update me
- */
+@ApplicationScoped
 public class NewTodoPresenter {
 
-    private final IdGeneratorService service = new IdGeneratorService();
+    @Inject
     private TodoListPresenter todoListPresenter;
+
+    @Inject
     private NewTodoView view;
 
-    public void init( final TodoListPresenter todoListPresenter,
-                      final NewTodoView view ) {
-        this.todoListPresenter = todoListPresenter;
-        this.view = view;
+    @Inject
+    private IdGeneratorService service;
+
+    @PostConstruct
+    public void init() {
         view.build();
     }
 

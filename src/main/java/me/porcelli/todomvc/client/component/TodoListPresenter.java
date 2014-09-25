@@ -4,29 +4,35 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import me.porcelli.todomvc.client.model.Status;
 import me.porcelli.todomvc.client.model.Todo;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 
+@ApplicationScoped
 public class TodoListPresenter {
 
-    private final Map<Todo, TodoElementPresenter> todoElements = new LinkedHashMap<Todo, TodoElementPresenter>();
+    @Inject
     private TodoListView view;
+    @Inject
     private TodoListFooterPresenter todoListFooterPresenter;
+    @Inject
+    private SyncBeanManager beanManager;
 
-    public void init( final TodoListView view,
-                      final TodoListFooterPresenter todoListFooterPresenter ) {
-        this.view = view;
-        this.todoListFooterPresenter = todoListFooterPresenter;
+    private final Map<Todo, TodoElementPresenter> todoElements = new LinkedHashMap<Todo, TodoElementPresenter>();
+
+    @PostConstruct
+    public void init() {
         view.build();
     }
 
     public void addTodo( final Todo newTodo ) {
-        final TodoElementPresenter _presenter = new TodoElementPresenter();
-        final TodoElementView _view = new TodoElementView();
-        _view.init( _presenter );
-        _presenter.init( newTodo, _view, this );
+        final TodoElementPresenter _presenter = beanManager.lookupBean( TodoElementPresenter.class ).getInstance();
+        _presenter.init( newTodo );
         todoElements.put( newTodo, _presenter );
 
         view.addTodo( _presenter.getView() );

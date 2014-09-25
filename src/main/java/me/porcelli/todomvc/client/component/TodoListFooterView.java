@@ -1,5 +1,9 @@
 package me.porcelli.todomvc.client.component;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -13,9 +17,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
 import me.porcelli.todomvc.client.resources.AppResource;
 
-/**
- * TODO: update me
- */
+@Dependent
 public class TodoListFooterView extends Composite {
 
     interface ViewBinder
@@ -44,14 +46,12 @@ public class TodoListFooterView extends Composite {
     @UiField
     Button clearCompleted;
 
+    @Inject
     private TodoListFooterPresenter presenter;
 
-    public TodoListFooterView() {
+    @PostConstruct
+    void init() {
         initWidget( uiBinder.createAndBindUi( this ) );
-    }
-
-    public void init( final TodoListFooterPresenter presenter ) {
-        this.presenter = presenter;
     }
 
     public void updateCount( int count ) {

@@ -1,5 +1,8 @@
 package me.porcelli.todomvc.client.component;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -19,9 +22,7 @@ import com.google.gwt.user.client.ui.Widget;
 import me.porcelli.todomvc.client.model.Status;
 import me.porcelli.todomvc.client.resources.AppResource;
 
-/**
- * TODO: update me
- */
+@Dependent
 public class TodoElementView extends Composite
         implements TodoElementPresenter.View {
 
@@ -52,11 +53,12 @@ public class TodoElementView extends Composite
 
     private Status stateBeforeEdit;
 
-    public TodoElementView() {
+    @PostConstruct
+    public void init() {
         initWidget( uiBinder.createAndBindUi( this ) );
     }
 
-    public void init( final TodoElementPresenter presenter ) {
+    public void setup( final TodoElementPresenter presenter ) {
         this.presenter = presenter;
     }
 

@@ -1,5 +1,9 @@
 package me.porcelli.todomvc.client.component;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
@@ -10,6 +14,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+@Dependent
 public class NewTodoView extends Composite {
 
     interface ViewBinder
@@ -18,19 +23,17 @@ public class NewTodoView extends Composite {
 
     }
 
+    private static ViewBinder uiBinder = GWT.create( ViewBinder.class );
+
     @UiField
     TextBox textBox;
 
-    public NewTodoView() {
-        initWidget( uiBinder.createAndBindUi( this ) );
-    }
-
-    private static ViewBinder uiBinder = GWT.create( ViewBinder.class );
-
+    @Inject
     private NewTodoPresenter presenter;
 
-    public void init( final NewTodoPresenter presenter ) {
-        this.presenter = presenter;
+    @PostConstruct
+    void init() {
+        initWidget( uiBinder.createAndBindUi( this ) );
     }
 
     public void build() {

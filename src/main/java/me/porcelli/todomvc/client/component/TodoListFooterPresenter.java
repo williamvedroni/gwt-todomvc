@@ -1,19 +1,21 @@
 package me.porcelli.todomvc.client.component;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.ui.IsWidget;
 
-/**
- * TODO: update me
- */
+@ApplicationScoped
 public class TodoListFooterPresenter {
 
+    @Inject
     private TodoListPresenter listPresenter;
+    @Inject
     private TodoListFooterView view;
 
-    public void init( final TodoListPresenter listPresenter,
-                      final TodoListFooterView view ) {
-        this.listPresenter = listPresenter;
-        this.view = view;
+    @PostConstruct
+    public void init() {
         view.build();
     }
 

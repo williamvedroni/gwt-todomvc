@@ -1,17 +1,25 @@
 package me.porcelli.todomvc.client.component;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
-/**
- * TODO: update me
- */
+@ApplicationScoped
 public class TodoMainView extends Composite {
+
+    @Inject
+    private NewTodoPresenter newTodoPresenter;
+    @Inject
+    private TodoListPresenter todoListPresenter;
+    @Inject
+    private TodoListFooterPresenter todoListFooterPresenter;
 
     interface ViewBinder
             extends
@@ -27,16 +35,14 @@ public class TodoMainView extends Composite {
     @UiField
     HTMLPanel header;
 
-    public TodoMainView() {
+    @PostConstruct
+    public void init() {
         initWidget( uiBinder.createAndBindUi( this ) );
-    }
 
-    public void addNewTodo( IsWidget view ) {
-        header.add( view );
-    }
+        header.add( newTodoPresenter.getView() );
+        app.add( todoListPresenter.getView() );
+        app.add( todoListFooterPresenter.getView() );
 
-    public void add( IsWidget view ) {
-        app.add( view );
     }
 
 }
