@@ -1,5 +1,6 @@
 package me.porcelli.todomvc.client.component;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
@@ -7,9 +8,11 @@ import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -19,45 +22,50 @@ import me.porcelli.todomvc.client.resources.AppResource;
 /**
  * TODO: update me
  */
-public class TodoElementView implements TodoElementPresenter.View {
+public class TodoElementView extends Composite
+        implements TodoElementPresenter.View {
+
+    interface ViewBinder
+            extends
+            UiBinder<Widget, TodoElementView> {
+
+    }
+
+    private static ViewBinder uiBinder = GWT.create( ViewBinder.class );
 
     private TodoElementPresenter presenter;
-    private HTMLPanel element;
-    private TextBox edit;
-    private HTMLPanel label;
+
+    @UiField
+    HTMLPanel element;
+
+    @UiField
+    CheckBox toggle;
+
+    @UiField
+    HTMLPanel label;
+
+    @UiField
+    Button destroy;
+
+    @UiField
+    TextBox edit;
+
     private Status stateBeforeEdit;
-    private CheckBox toggle;
+
+    public TodoElementView() {
+        initWidget( uiBinder.createAndBindUi( this ) );
+    }
 
     public void init( final TodoElementPresenter presenter ) {
         this.presenter = presenter;
     }
 
     public void build() {
-        this.element = new HTMLPanel( "li", "" );
         this.stateBeforeEdit = presenter.getStatus();
-        final FlowPanel view = new FlowPanel();
-        edit = new TextBox();
-        edit.addStyleName( AppResource.INSTANCE.CSS().edit() );
-        edit.setVisible( false );
-        view.addStyleName( AppResource.INSTANCE.CSS().view() );
 
-        toggle = new CheckBox();
         toggle.getElement().getFirstChildElement().setClassName( AppResource.INSTANCE.CSS().toggle() );
         toggle.getElement().removeChild( toggle.getElement().getLastChild() );
-        label = new HTMLPanel( "label", "" );
         label.getElement().setInnerText( presenter.getTask() );
-
-        final Button destroy = new Button();
-        destroy.addStyleName( AppResource.INSTANCE.CSS().destroy() );
-
-        view.add( toggle );
-        view.add( label );
-        view.add( destroy );
-        element.add( view );
-
-        if ( edit != null ) {
-            element.add( edit );
-        }
 
         element.addDomHandler( new DoubleClickHandler() {
             @Override
@@ -102,11 +110,6 @@ public class TodoElementView implements TodoElementPresenter.View {
         } );
 
         setStatus( presenter.getStatus() );
-    }
-
-    @Override
-    public Widget asWidget() {
-        return element;
     }
 
     public void setStatus( final Status status ) {

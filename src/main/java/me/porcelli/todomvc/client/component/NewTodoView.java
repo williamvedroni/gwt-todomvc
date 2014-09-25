@@ -1,26 +1,40 @@
 package me.porcelli.todomvc.client.component;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import me.porcelli.todomvc.client.resources.AppResource;
 
-public class NewTodoView implements IsWidget {
+public class NewTodoView extends Composite {
+
+    interface ViewBinder
+            extends
+            UiBinder<Widget, NewTodoView> {
+
+    }
+
+    @UiField
+    TextBox textBox;
+
+    public NewTodoView() {
+        initWidget( uiBinder.createAndBindUi( this ) );
+    }
+
+    private static ViewBinder uiBinder = GWT.create( ViewBinder.class );
 
     private NewTodoPresenter presenter;
-    private TextBox textBox;
 
     public void init( final NewTodoPresenter presenter ) {
         this.presenter = presenter;
     }
 
     public void build() {
-        textBox = new TextBox();
         textBox.getElement().setPropertyString( "placeholder", "What needs to be done?" );
-        textBox.addStyleName( AppResource.INSTANCE.CSS().newTodo() );
         textBox.addKeyPressHandler( new KeyPressHandler() {
             @Override
             public void onKeyPress( KeyPressEvent event ) {
@@ -32,10 +46,5 @@ public class NewTodoView implements IsWidget {
                 }
             }
         } );
-    }
-
-    @Override
-    public Widget asWidget() {
-        return textBox;
     }
 }

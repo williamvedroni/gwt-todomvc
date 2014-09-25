@@ -1,33 +1,48 @@
 package me.porcelli.todomvc.client.component;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import me.porcelli.todomvc.client.resources.AppResource;
 
-public class TodoListView implements IsWidget {
+public class TodoListView extends Composite implements IsWidget {
 
-    private HTMLPanel todoList;
+    interface ViewBinder
+            extends
+            UiBinder<Widget, TodoListView> {
+
+    }
+
+    private static ViewBinder uiBinder = GWT.create( ViewBinder.class );
+
+    @UiField
+    HTMLPanel main;
+
+    @UiField
+    CheckBox toggleAll;
+
+    @UiField
+    HTMLPanel todoList;
+
     private TodoListPresenter presenter;
-    private HTMLPanel main;
+
+    public TodoListView() {
+        initWidget( uiBinder.createAndBindUi( this ) );
+    }
 
     public void init( final TodoListPresenter presenter ) {
         this.presenter = presenter;
     }
 
     public void build() {
-        main = new HTMLPanel( "section", "" );
-        main.addStyleName( AppResource.INSTANCE.CSS().main() );
-
-        final CheckBox toggleAll = new CheckBox();
-
         toggleAll.getElement().getFirstChildElement().setClassName( AppResource.INSTANCE.CSS().toggleAll() );
-
-        todoList = new HTMLPanel( "ul", "" );
-        todoList.addStyleName( AppResource.INSTANCE.CSS().todoList() );
 
         toggleAll.addClickHandler( new ClickHandler() {
             @Override
@@ -40,17 +55,9 @@ public class TodoListView implements IsWidget {
 
             }
         } );
-
-        main.add( toggleAll );
-        main.add( todoList );
     }
 
     public void addTodo( final IsWidget view ) {
         todoList.add( view );
-    }
-
-    @Override
-    public Widget asWidget() {
-        return main;
     }
 }

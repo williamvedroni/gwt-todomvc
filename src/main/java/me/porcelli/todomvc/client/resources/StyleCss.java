@@ -48,15 +48,6 @@ public interface StyleCss extends CssResource {
 
     String toggle();
 
-    String learn();
-
-    @ClassName("learn-bar")
-    String learnBar();
-
-    String hidden();
-
-    String quote();
-
     @ClassName("todo-count")
     String todoCount();
 
@@ -67,8 +58,17 @@ public interface StyleCss extends CssResource {
 
     String filters();
 
+    String completed();
+
+    String learn();
+
+    @ClassName("learn-bar")
+    String learnBar();
+
+    String hidden();
+
+    String quote();
+
     @ClassName("speech-bubble")
     String speechBubble();
-
-    String completed();
 }

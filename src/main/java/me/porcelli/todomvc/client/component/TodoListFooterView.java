@@ -1,24 +1,54 @@
 package me.porcelli.todomvc.client.component;
 
-import com.google.gwt.dom.client.Style;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import me.porcelli.todomvc.client.resources.AppResource;
 
 /**
  * TODO: update me
  */
-public class TodoListFooterView implements IsWidget {
+public class TodoListFooterView extends Composite {
 
-    private HTMLPanel footer;
-    private InlineLabel todoCount;
+    interface ViewBinder
+            extends
+            UiBinder<Widget, TodoListFooterView> {
+
+    }
+
+    private static ViewBinder uiBinder = GWT.create( ViewBinder.class );
+
+    @UiField
+    HTMLPanel footer;
+
+    @UiField
+    InlineLabel todoCount;
+
+    @UiField
+    Anchor allAnchor;
+
+    @UiField
+    Anchor activeAnchor;
+
+    @UiField
+    Anchor completedAnchor;
+
+    @UiField
+    Button clearCompleted;
+
     private TodoListFooterPresenter presenter;
+
+    public TodoListFooterView() {
+        initWidget( uiBinder.createAndBindUi( this ) );
+    }
 
     public void init( final TodoListFooterPresenter presenter ) {
         this.presenter = presenter;
@@ -35,25 +65,6 @@ public class TodoListFooterView implements IsWidget {
     }
 
     public void build() {
-        footer = new HTMLPanel( "footer", "" );
-        footer.getElement().getStyle().setDisplay( Style.Display.BLOCK );
-        footer.addStyleName( AppResource.INSTANCE.CSS().footer() );
-
-        todoCount = new InlineLabel();
-        todoCount.addStyleName( AppResource.INSTANCE.CSS().todoCount() );
-
-        footer.add( todoCount );
-
-        final HTMLPanel filters = new HTMLPanel( "ul", "" );
-        filters.addStyleName( AppResource.INSTANCE.CSS().filters() );
-
-        final Anchor allAnchor = new Anchor( "All" );
-        final Anchor activeAnchor = new Anchor( "Active" );
-        final Anchor completedAnchor = new Anchor( "Completed" );
-
-        allAnchor.addStyleName( AppResource.INSTANCE.CSS().selected() );
-
-        final HTMLPanel allLi = new HTMLPanel( "li", "" );
         allAnchor.addClickHandler( new ClickHandler() {
             @Override
             public void onClick( ClickEvent event ) {
@@ -64,10 +75,6 @@ public class TodoListFooterView implements IsWidget {
             }
         } );
 
-        allLi.add( allAnchor );
-        filters.add( allLi );
-
-        final HTMLPanel activeLi = new HTMLPanel( "li", "" );
         activeAnchor.addClickHandler( new ClickHandler() {
             @Override
             public void onClick( ClickEvent event ) {
@@ -78,10 +85,6 @@ public class TodoListFooterView implements IsWidget {
             }
         } );
 
-        activeLi.add( activeAnchor );
-        filters.add( activeLi );
-
-        final HTMLPanel completedLi = new HTMLPanel( "li", "" );
         completedAnchor.addClickHandler( new ClickHandler() {
             @Override
             public void onClick( ClickEvent event ) {
@@ -92,23 +95,11 @@ public class TodoListFooterView implements IsWidget {
             }
         } );
 
-        completedLi.add( completedAnchor );
-        filters.add( completedLi );
-
-        footer.add( filters );
-        final Button button = new Button( "Clear completed" );
-        button.addStyleName( AppResource.INSTANCE.CSS().clearCompleted() );
-        button.addClickHandler( new ClickHandler() {
+        clearCompleted.addClickHandler( new ClickHandler() {
             @Override
             public void onClick( ClickEvent event ) {
                 presenter.clearCompleted();
             }
         } );
-        footer.add( button );
-    }
-
-    @Override
-    public Widget asWidget() {
-        return footer;
     }
 }
