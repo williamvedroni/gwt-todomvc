@@ -20,14 +20,12 @@ public class StorageService {
         em.flush();
         em.detach( event.getTodo() );
 
-        Todo fetchedTask = em.find( Todo.class, event.getTodo().getId() );
+        em.find( Todo.class, event.getTodo().getId() );
     }
 
     public void delete( @Observes final DeleteTodo event ) {
         em.remove( event.getTodo() );
         em.flush();
-
-        Todo fetchedTask = em.find( Todo.class, event.getTodo().getId() );
     }
 
 }
