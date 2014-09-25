@@ -2,11 +2,10 @@ package me.porcelli.todomvc.client.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-
-import org.jboss.errai.common.client.api.annotations.Portable;
+import javax.persistence.NamedQuery;
 
 @Entity
-@Portable
+@NamedQuery(name="selectTasks", query="SELECT a FROM Todo a")
 public class Todo {
 
     @Id
