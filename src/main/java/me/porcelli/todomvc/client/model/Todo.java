@@ -1,10 +1,22 @@
 package me.porcelli.todomvc.client.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import org.jboss.errai.common.client.api.annotations.Portable;
+
+@Entity
+@Portable
 public class Todo {
 
-    String id;
-    String task;
-    Status status;
+    @Id
+    private String id;
+    private String task;
+    private Status status;
+
+    // This constructor is used by JPA
+    public Todo() {
+    }
 
     public Todo( final String id,
                  final String task,

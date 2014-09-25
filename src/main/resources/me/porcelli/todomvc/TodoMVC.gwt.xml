@@ -3,7 +3,7 @@
     "http://google-web-toolkit.googlecode.com/svn/tags/2.5.0/distro-source/core/src/gwt-module.dtd">
 
 <module rename-to="todomvc">
-  <inherits name="org.jboss.errai.enterprise.CDI"/>
+  <inherits name="org.jboss.errai.enterprise.All"/>
 
   <!-- These lines enable Super DevMode and source maps. -->
   <add-linker name="xsiframe"/>
