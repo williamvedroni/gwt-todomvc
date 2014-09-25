@@ -7,6 +7,9 @@
 
   <entry-point class='me.porcelli.todomvc.client.TodoMVCEntryPoint'/>
 
+  <source path="client"/>
+  <source path="shared"/>
+
   <!-- These lines enable Super DevMode and source maps. -->
   <add-linker name="xsiframe"/>
   <set-configuration-property name="devModeRedirectEnabled" value="true"/>
